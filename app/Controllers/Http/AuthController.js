@@ -31,7 +31,7 @@ class AuthController {
 
     async getEvents({auth, request, response}) {
         try {
-          const events = await auth.user.events().query().fetch()
+          const events = await auth.user.events().fetch()
           return response.status(200).send(events)
         } catch(e) {
           return response.status(500).send({
