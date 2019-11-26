@@ -9,11 +9,12 @@ class PrivateLocations {
             const { id } = params
             const location = await UserLocation.findBy('id_location', id)
             if(!location) return response.status(404).send({message: 'UserLocation not found'})
-            if (auth.user.id !== location.id_user) 
+            let check = await UserLocation.query().where('id_user', auth.user.id)
+            if(check.rows.length === 0) {
                 return response
                     .status(401)
                     .send("Non hai i permessi per accedere a questa rotta") 
-            else 
+            }else 
                 await next()
         }
     }

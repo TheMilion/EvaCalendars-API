@@ -47,6 +47,7 @@ Route.group(() => {
   Route.post('/Login', 'AuthController.login')
   //Get Refresh Token
   Route.post('/refresh', 'AuthController.refresh')
+  Route.post('/logout', 'AuthController.logout')
 
 }).prefix('/Auth')
 
@@ -127,13 +128,17 @@ Route.group(() => {
 Route.group(() => {
 
   //Get All Events
-  Route.get('/', 'EventController.getAll')
+  Route.get('/', 'EventController.getAll').middleware('userRouteAdminPrivate')
   //Post Event
-  Route.post('/', 'EventController.create').validator('Event')
+  Route.post('/', 'EventController.create').validator('Event').middleware('EventsPrivatePost')
+  //Patch Event
+  Route.patch('/:id', 'EventController.update').validator('EventUpdate').middleware('EventsPrivateRouteCheck')
+  //Delete Event
+  Route.delete('/:id', 'EventController.deleteById').middleware('EventsPrivateRouteCheck')
   //Post User Event
-  Route.post('/:id/partecipants', 'EventPartecipantController.addById').validator('EventPartecipants')
+  Route.post('/:id/partecipants', 'EventPartecipantController.addById').validator('EventPartecipants').middleware('EventsPrivateRouteCheck')
   //Delete User Event
-  Route.delete('/:id/partecipants', 'EventPartecipantController.deleteUsersById')
+  Route.delete('/:id/partecipants', 'EventPartecipantController.deleteUsersById').middleware('EventsPrivateRouteCheck')
   //Get Event By Id
   Route.get('/:id', 'EventController.getById').middleware('EventsRouteDualPrivate')
 
@@ -144,13 +149,13 @@ Route.group(() => {
 Route.group(() => {
 
   //Get All Groups
-  Route.get('/', 'GroupController.getAll').middleware('userRouteAdminPrivate')
+  Route.get('/', 'GroupController.getAll')
   //Create Group
   Route.post("/",'GroupController.create').validator('Group').middleware('userRouteAdminPrivate')
   //Update Group by Id
   Route.patch("/:id", 'GroupController.update').validator('Group').middleware('userRouteAdminPrivate')|
   //Get Groups By Id
-  Route.get('/:id', 'GroupController.getById').middleware('GroupsRouteDualPrivate')
+  Route.get('/:id', 'GroupController.getById')
   //Delete Groups By Id
   Route.delete('/:id', 'GroupController.deleteById').middleware('userRouteAdminPrivate')
   //Post member By Id

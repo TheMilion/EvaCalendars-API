@@ -33,7 +33,37 @@ class EventController {
       })
     }
   }
-  
+  async update({params, request, response}){
+    try {
+      const data = request.all()
+      const { id } = params
+      const  event = await Event.find(id)
+      if(event){
+        event.merge({...data})
+        await event.save()
+        return response.send('Evento Modificato')
+      } else return response.status(404).send('Evento non trovato')
+    } catch (error) {
+      return response.status(500).send({message: error.message})
+    }
+  }
+
+  async deleteById ({params,response}) {
+    try {
+      const { id } = params
+      const event = await Event.find(id)
+      if(event) {
+        await event.partecipants().delete()
+        await event.delete()
+        return  response.status(200).send("Evento cancellato correttamente")
+      } return response.status(404).send("Non esiste questo evento")   
+    } catch(e) {
+      return response.status(500).send({
+        message: e.message
+      })
+    }
+  }
+
 }
 
 module.exports = EventController
