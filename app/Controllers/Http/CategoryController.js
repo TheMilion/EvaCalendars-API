@@ -1,6 +1,7 @@
 'use strict'
 
 const Category = use('App/Models/Category')
+const Event = use('App/Models/Event')
 
 class CategoryController {
    
@@ -18,11 +19,12 @@ class CategoryController {
   
   async getById ({response, params}) {
     try {
-      const categories = await Category.find(params.id)
-        if(categories) {
-          return response.status(200).send(categories)
-        }else response.status(404).send("Categoria non trovata")
-      } catch(e) {
+      // const categories = await Category.find(params.id)
+      const getUser = await Category.query().where('id', params.id).with('user').fetch()
+      if(categories) {
+      return response.status(200).send(getUser)
+    }else response.status(404).send("Categoria non trovata")
+    } catch(e) {
       return response.status(500).send({
         message: e.message
       })
@@ -33,6 +35,7 @@ class CategoryController {
   try {
     const categories = await Category.find(params.id)
     if(categories) {
+      await Event.query().where('id_category', params.id).update({ id_category: 0})
       await categories.delete()
       return  response.status(200).send("Categoria Cancellata Correttamente")
     }else response.status(404).send("Categoria non trovata")
@@ -70,6 +73,18 @@ async create ({request, response, auth}) {
     })
   }
 }
+
+  async getEvents({params}){
+    const category = await Category.find(params.id)
+    return category.event().fetch()
+    // const category2 = await Category
+    // .query()
+    // .where('id', params.id)
+    // // .with('user')
+    // .with('event')
+    // .fetch()
+    // return category2
+  }
 }
 
 module.exports = CategoryController

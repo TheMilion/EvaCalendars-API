@@ -41,7 +41,8 @@ const namedMiddleware = {
   userRouteAdminPrivate: 'App/Middleware/userRouteAdminPrivate',
   CategoriesRouteDualPrivate: 'App/Middleware/CategoriesRouteDualPrivate',
   EventsRouteDualPrivate: 'App/Middleware/EventsRouteDualPrivate',
-  GroupsRouteDualPrivate: 'App/Middleware/GroupsRouteDualPrivate'
+  GroupsRouteDualPrivate: 'App/Middleware/GroupsRouteDualPrivate',
+  LocationRouteDualPrivate: 'App/Middleware/LocationRouteDualPrivate'
 }
 
 /*
