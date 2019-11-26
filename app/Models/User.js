@@ -66,10 +66,10 @@ class User extends Model {
 
   events () {
     return this.belongsToMany('App/Models/Event', "id_user", "id_event", "id", "id")
-      .with('location')
-      .with('partecipants')
-      .with('category')
-      .with('creator')
+      //.with('location')
+      //.with('partecipants')
+      //.with('category')
+      //.with('creator')
       .pivotTable('event_partecipants')
 }
 }

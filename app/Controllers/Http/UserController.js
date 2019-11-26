@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Event = use('App/Models/Event')
 
 
 class UserController {
@@ -99,8 +100,16 @@ class UserController {
     try {
       const { id } = params
       const user = await User.find(id)
-      await user.delete()
-      return  response.status(200).send("Utente cancellato correttamente")
+      if(user) {
+        await user.groups().detach()
+        await user.category().delete()
+        await user.location().detach()
+        await user.events().detach()
+        await Event.query().where("id_creator", params.id).update({ id_creator: 0})
+        await user.tokens().delete()
+        await user.delete()
+        return  response.status(200).send("Utente cancellato correttamente")
+      } return response.status(404).send("Non esiste questo utente")   
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -112,9 +121,11 @@ class UserController {
     const data = request.all()
     const { id } = params
     const user =  await User.find(id)
+     if(user) {
       user.merge({...data})
       await user.save()
       return response.send("Utente modificato correttamente") 
+    } return response.status(404).send("Non esiste questo utente")  
   }
 
 }

@@ -22,7 +22,6 @@ class AuthController {
     async getUser({ response, auth }) {
         try {
             const user = await auth.getUser()
-            // I personally do not want to return the full user object here
             return user
         } catch (error) {
             response.status(401).send(error)
@@ -31,8 +30,9 @@ class AuthController {
 
     async getEvents({auth, request, response}) {
         try {
-          const events = await auth.user.events().query().fetch()
-          return response.status(200).send(events)
+          const events = await auth.user.events().fetch()
+          if(events.rows.length != 0) return response.status(200).send(events)
+          else return response.status(404).send("Nessun evento Trovato")
         } catch(e) {
           return response.status(500).send({
             message: e.message
@@ -43,8 +43,8 @@ class AuthController {
       async getlocation({ response, auth }) {
         try {
           const location = await auth.user.location().fetch()
-          console.log(location)
-          return response.status(200).send(location)
+          if(location.rows.length != 0) return response.status(200).send(location)
+          else return response.status(404).send("Nessuna Location Trovato")
         } catch(e) {
           return response.status(500).send({
             message: e.message
@@ -67,8 +67,8 @@ class AuthController {
     async getGroups({ response, auth }) {
       try {
         const groups = await auth.user.groups().fetch()
-        console.log(groups)
-        return response.status(200).send(groups)
+        if(groups.rows.length != 0) return response.status(200).send(groups)
+        else return response.status(404).send("Nessuna gruppo trovato")
       } catch(e) {
         return response.status(500).send({
           message: e.message
