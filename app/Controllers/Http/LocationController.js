@@ -7,10 +7,6 @@ class LocationController {
   async getAll () {
     const location = await Location
       .query()
-      //.with('partecipants')
-      //.with('category')
-      //.with('location')
-      //.with('creator')
       .fetch()
      return location
   }
@@ -22,9 +18,6 @@ class LocationController {
       .query()
       .where('id', id)
       .with('partecipants')
-      //.with('category')
-      //.with('location')
-      //.with('creator')
       .fetch()
       if(location) return response.status(200).send(location)
       else return response.status(400).send('Location non trovata')
@@ -67,10 +60,12 @@ class LocationController {
     try {
       const { id } = params
       const location = await Location.find(id)
-      await Event.query().where('id_location', params.id).update({ id_location: 0})
-      await location.partecipants().delete()
-      await location.delete()
-      return response.status(200).send('Location eliminata correttamente')
+      if(location){
+        await Event.query().where('id_location', params.id).update({ id_location: 0})
+        await location.partecipants().delete()
+        await location.delete()
+        return response.status(200).send('Location eliminata correttamente')
+      } else return response.status(404).send('Location non esiste')
     } catch (error) {
       return response.status(500).send({
         message: error.message
@@ -79,18 +74,11 @@ class LocationController {
   }
 
   async getEvents({params, response}){
-    // const location = await Location.find(params.id)
-    const location2 = await Location
-    .events()
-    // .fetch()
-      // .query()
-      // .where('id', params.id)
-      // .with('events')
-      // .with('category')
-      // .with('location')
-      // .with('creator')
-      .fetch()
-     return location2
+    const location = await Location.find(params.id)
+    if(location){
+      const getEvent = await location.events().fetch()
+      return response.status(200).send(getEvent)
+    } else return response.status(404).send("Location non esiste")
   }
 }
 

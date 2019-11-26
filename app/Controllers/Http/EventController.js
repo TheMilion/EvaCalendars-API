@@ -34,6 +34,20 @@ class EventController {
     }
   }
 
+  async update({params, request, response}){
+    try {
+      const data = request.all()
+      const { id } = params
+      const  event = await Event.find(id)
+      if(event){
+        event.merge({...data})
+        await event.save()
+        return response.send('Evento Modificato')
+      } else return response.status(404).send('Evento non trovato')
+    } catch (error) {
+      return response.status(500).send({message: error.message})
+    }
+  }
 
 }
 

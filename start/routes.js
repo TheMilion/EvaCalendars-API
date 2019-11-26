@@ -125,6 +125,8 @@ Route.group(() => {
   Route.get('/', 'EventController.getAll')
   //Post Event
   Route.post('/', 'EventController.create').validator('Event')
+  //Patch Event
+  Route.patch('/:id', 'EventController.update').middleware('userRouteDualPrivate')
   //Post User Event
   Route.post('/:id/partecipants', 'EventPartecipantController.addById')
   //Delete User Event
@@ -178,4 +180,4 @@ Route.group(() => {
 
   //Get Event On Location
   Route.get('/:id/events', 'LocationController.getEvents').middleware('userRouteAdminPrivate')
-}).prefix('/location').middleware('auth')
+}).prefix('/locations').middleware('auth')
