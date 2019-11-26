@@ -18,6 +18,27 @@ class AuthController {
         .newRefreshToken()
         .generateForRefreshToken(refreshToken);
     }
+
+    async logout({ request, response, auth }){
+      try {
+        const refreshToken = request.input('refreshToken');
+        if(!refreshToken){
+
+            // You can throw any exception you want here
+            throw response.send(`Refresh Token missing`);
+        }
+
+        await auth
+          .authenticator('jwt')
+          .revokeTokens([refreshToken], true)
+
+        console.log(auth.user)
+
+        return response.send({status : 200, "message" : 'success'})
+      } catch (error) {
+        return response.status(500).send(error)
+      }
+    }
     
     async getUser({ response, auth }) {
         try {

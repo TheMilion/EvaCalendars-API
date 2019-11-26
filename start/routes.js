@@ -46,6 +46,8 @@ Route.group(() => {
   Route.post('/Login', 'AuthController.login')
   //Get Refresh Token
   Route.post('/refresh', 'AuthController.refresh')
+
+  Route.post('/logout', 'AuthController.logout')
 }).prefix('/Auth')
 
 //Me User
