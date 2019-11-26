@@ -1,93 +1,56 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
-/**
- * Resourceful controller for interacting with eventpartecipants
- */
+const Event = use('App/Models/Event')
+const EventPartecipant = use('App/Models/EventPartecipant')
+var counterError = 0
 class EventPartecipantController {
-  /**
-   * Show a list of all eventpartecipants.
-   * GET eventpartecipants
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async index ({ request, response, view }) {
+
+  async addById ({request,response, params}) {
+    try {
+      const id_params = params.id
+      const {utenti} = request.all()
+      var event = await EventPartecipant.query().where("id_event" , params.id).fetch()  
+        if(event){
+          event = event.toJSON()
+          utenti.forEach(user => {
+            counterError = 0
+            event.forEach(userEvent => { 
+              if(user.id_user == 0 && user.email == userEvent.email) counterError ++
+              else if(user.id_user != 0 && user.id_user == userEvent.id_user) counterError ++
+            })
+          if(counterError == 0 ) EventPartecipant.create({...user, id_event: id_params})
+        })
+        return response.status(200).send("Operazione Effettuata Correttamente")
+       }else return response.status(404).send("Evento non esiste")    
+    } catch(e) {
+      return response.status(500).send({
+        message: e.message
+      })
+    }
   }
 
-  /**
-   * Render a form to be used for creating a new eventpartecipant.
-   * GET eventpartecipants/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+
+  async deleteUsersById ({request,response, params}) {
+    try {
+      const id_params = params.id
+      const {utenti} = request.all()
+      const users = utenti.map(x => x.id_user);
+      var eventExist = await Event.find(id_params)
+      if(eventExist){
+        var event = await EventPartecipant.query()
+          .where('id_event' , id_params)
+          .whereIn('id_user', users)
+          .delete()
+        return response.status(200).send("Operazione Effettuata Correttamente")
+      }else return response.status(404).send("Evento non esiste")    
+    } catch(e) {
+      return response.status(500).send({
+        message: e.message
+      })
+    }
   }
 
-  /**
-   * Create/save a new eventpartecipant.
-   * POST eventpartecipants
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
 
-  /**
-   * Display a single eventpartecipant.
-   * GET eventpartecipants/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing eventpartecipant.
-   * GET eventpartecipants/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update eventpartecipant details.
-   * PUT or PATCH eventpartecipants/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a eventpartecipant with id.
-   * DELETE eventpartecipants/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
-  }
 }
 
 module.exports = EventPartecipantController

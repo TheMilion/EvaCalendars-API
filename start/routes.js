@@ -123,9 +123,14 @@ Route.group(() => {
 Route.group(() => {
   //Get All Events
   Route.get('/', 'EventController.getAll')
+  //Post Event
+  Route.post('/', 'EventController.create').validator('Event')
+  //Post User Event
+  Route.post('/:id/partecipants', 'EventPartecipantController.addById')
+  //Delete User Event
+  Route.delete('/:id/partecipants', 'EventPartecipantController.deleteUsersById')
   //Get Event By Id
   Route.get('/:id', 'EventController.getById').middleware('EventsRouteDualPrivate')
-
 }).prefix('/Events').middleware('auth')
 
 
@@ -133,10 +138,21 @@ Route.group(() => {
 Route.group(() => {
   //Get All Groups
   Route.get('/', 'GroupController.getAll').middleware('userRouteAdminPrivate')
+  //Create Group
+  Route.post("/",'GroupController.create').validator('Group').middleware('userRouteAdminPrivate')
+  //Update Group by Id
+  Route.patch("/:id", 'GroupController.update').validator('Group').middleware('userRouteAdminPrivate')|
   //Get Groups By Id
   Route.get('/:id', 'GroupController.getById').middleware('GroupsRouteDualPrivate')
-  //Get Event By Id
-  Route.post('/:id/member', 'UserGroupController.addById').middleware('EventsRouteDualPrivate')
+  //Delete Groups By Id
+  Route.delete('/:id', 'GroupController.deleteById').middleware('userRouteAdminPrivate')
+  //Get get member By Id
+  Route.post('/:id/member', 'UserGroupController.addById').middleware('GroupsRouteDualPrivate')
+  //Put/remove Manager Group By Id
+  Route.patch('/:id/member', 'UserGroupController.modifyManagerById').middleware('userRouteAdminPrivate')
+  //Delete User inside Group By Id
+  Route.delete('/:id/member', 'UserGroupController.deleteUserById').middleware('GroupsRouteDualPrivate')
+  
 
 }).prefix('/groups').middleware('auth')
 

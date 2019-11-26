@@ -21,7 +21,9 @@ class CategoryController {
     try {
       // const categories = await Category.find(params.id)
       const getUser = await Category.query().where('id', params.id).with('user').fetch()
+      if(categories) {
       return response.status(200).send(getUser)
+    }else response.status(404).send("Categoria non trovata")
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -32,9 +34,11 @@ class CategoryController {
   async deleteById({params, response}) {
   try {
     const categories = await Category.find(params.id)
-    await Event.query().where('id_category', params.id).update({ id_category: 0})
-    await categories.delete()
-    return  response.status(200).send("Categoria Cancellata Correttamente")
+    if(categories) {
+      await Event.query().where('id_category', params.id).update({ id_category: 0})
+      await categories.delete()
+      return  response.status(200).send("Categoria Cancellata Correttamente")
+    }else response.status(404).send("Categoria non trovata")
   } catch(e) {
     return response.status(500).send({
       message: e.message
@@ -46,9 +50,11 @@ async updateById ({ params, request, response }) {
   try {
     const nome = request.only(['nome'])
     const categories = await Category.find(params.id)
-    categories.merge({...nome})
-    await categories.save()
-    return  response.status(200).send("Categoria Modificata Correttamente")
+    if(categories) {
+      categories.merge({...nome})
+      await categories.save()
+      return  response.status(200).send("Categoria Modificata Correttamente")
+    }else response.status(404).send("Categoria non trovata")
   } catch(e) {
     return response.status(500).send({
       message: e.message

@@ -25,7 +25,7 @@ class User {
       'nome.required': 'Campo Nome Obbligatorio',
       'cognome.required': 'Campo Cognome Obbligatorio',
       'reparto.required': 'Campo Reparto Obbligatorio',
-      'id_role.require': 'Campo Ruolo Obbligatorio',
+      'id_role.required': 'Campo Ruolo Obbligatorio',
     }
 }
 

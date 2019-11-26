@@ -6,7 +6,8 @@ class RoleController {
   async getAll ({response}) {
     try {
       const role = await Role.all()
-      return response.status(200).send(role)
+      if(role.rows.length == 0) return response.status(404).send("Non esiste alcun ruolo")    
+      else return response.status(200).send(role)
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -33,7 +34,7 @@ class RoleController {
       if(role) {
         await role.delete()
         return response.status(200).send("Ruolo cancellato correttamente")
-      } else return response.send("Ruolo non esistente")  
+      } else return response.status(404).send("Ruolo non esistente")  
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -46,7 +47,7 @@ class RoleController {
       const id_params = params.id
       const role = await Role.find(id_params)
       if(role) return response.status(200).send(role)
-      else return response.status(404).send("Utente Non Trovato")
+      else return response.status(404).send("Ruolo Non Trovato")
     } catch(e) {
       return response.status(500).send({
         message: e.message
