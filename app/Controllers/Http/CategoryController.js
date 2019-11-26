@@ -19,9 +19,8 @@ class CategoryController {
   
   async getById ({response, params}) {
     try {
-      // const categories = await Category.find(params.id)
-      const getUser = await Category.query().where('id', params.id).with('user').fetch()
-      if(categories) {
+       const getUser = await Category.query().where('id', params.id).with('user').fetch()
+      if(getUser) {
       return response.status(200).send(getUser)
     }else response.status(404).send("Categoria non trovata")
     } catch(e) {

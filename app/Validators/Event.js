@@ -1,5 +1,22 @@
 'use strict'
+const Validator = use('Validator')
+const Database = use('Database')
 
+const existsFn = async (data, field, message, args, get) => {
+  const value = get(data, field)
+  if (!value) {
+    return
+  }
+
+  const [table, column] = args
+  const row = await Database.table(table).where(column, value).first()
+
+  if (!row) {
+    throw message
+  }
+}
+
+Validator.extend('exists', existsFn)
 class User {
   get validateAll () {
     return true
@@ -8,9 +25,9 @@ class User {
   get rules () {
     return {
       title: 'required',
-      id_category: 'min:1|integer|unique:categories',
-      id_location: 'min:1|integer',
-      id_creator: 'required|integer',
+      id_category: 'min:1|integer|exists:categories,id',
+      id_location: 'min:1|integer|exists:locations,id',
+      id_creator: 'required|integer|exists:users,id',
       date_from: 'required',
       date_to: 'required',
       hour_from: 'required',
@@ -29,10 +46,13 @@ class User {
       'note.min': 'Campo note non puo essere vuoto se inserito',
       'id_location.min': 'Campo location non puo essere vuoto se inserito',
       'id_location.integer': 'Campo location deve essere intero',
+      'id_location.exists': 'Location non esistente',
       'id_category.integer': 'Campo Categorie deve essere intero',
       'id_category.min': 'Campo categorie non puo essere vuoto se inserito',
+      'id_category.exists': 'Categoria non esistente',
       'id_creator.integer': 'Campo Categorie deve essere intero',
       'id_creator.required': 'Campo creatore obbligatorio',
+      'id_creator.exists': 'Users non esistente',
     }
 }
 

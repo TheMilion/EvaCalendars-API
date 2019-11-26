@@ -42,14 +42,17 @@ Route.get('/', () => {
 
 //Login
 Route.group(() => {
+
   //Effettua Login
   Route.post('/Login', 'AuthController.login')
   //Get Refresh Token
   Route.post('/refresh', 'AuthController.refresh')
+
 }).prefix('/Auth')
 
 //Me User
 Route.group(() => {
+
   //Get Me
   Route.get('/', 'AuthController.getUser')
   //Get Event
@@ -65,6 +68,7 @@ Route.group(() => {
 
 //User
 Route.group(() => {
+
   //Get All User
   Route.get('/', 'UserController.getAll').middleware('userRouteAdminPrivate')
   //Create new User
@@ -79,7 +83,6 @@ Route.group(() => {
   Route.get('/:id/locations', 'UserController.getLocationById').middleware('userRouteDualPrivate')
   //Get User-Id Groups
   Route.get('/:id/groups', 'UserController.getGroupsById').middleware('userRouteDualPrivate')
-
   //Update User
   Route.patch('/:id', 'UserController.update').validator('UserUpdate').middleware('userRouteDualPrivate')
   //Delete User
@@ -89,6 +92,7 @@ Route.group(() => {
 
 //Categories
 Route.group(() => {
+
   //Get All Categories
   Route.get('/', 'CategoryController.getAll').middleware('userRouteAdminPrivate')
   //Create Categories
@@ -99,13 +103,14 @@ Route.group(() => {
   Route.delete('/:id', 'CategoryController.deleteById').middleware('CategoriesRouteDualPrivate')
   //Patch Categories-Id
   Route.patch('/:id', 'CategoryController.updateById').middleware('CategoriesRouteDualPrivate')
-  
   //Get Event on Category
   Route.get('/:id/events', 'CategoryController.getEvents').middleware('userRouteAdminPrivate')
+
 }).prefix('/categories').middleware('auth')
 
 //Roles
 Route.group(() => {
+
   //Get All Roles
   Route.get('/', 'RoleController.getAll')
   //Create Roles
@@ -114,26 +119,30 @@ Route.group(() => {
   Route.get('/:id', 'RoleController.getById')
   //Delete Role
   Route.delete('/:id', 'RoleController.deleteById')
+
 }).prefix('/Roles').middleware('auth','userRouteAdminPrivate')
 
 
 //Events
 Route.group(() => {
+
   //Get All Events
   Route.get('/', 'EventController.getAll')
   //Post Event
   Route.post('/', 'EventController.create').validator('Event')
   //Post User Event
-  Route.post('/:id/partecipants', 'EventPartecipantController.addById')
+  Route.post('/:id/partecipants', 'EventPartecipantController.addById').validator('EventPartecipants')
   //Delete User Event
   Route.delete('/:id/partecipants', 'EventPartecipantController.deleteUsersById')
   //Get Event By Id
   Route.get('/:id', 'EventController.getById').middleware('EventsRouteDualPrivate')
+
 }).prefix('/Events').middleware('auth')
 
 
 //Groups
 Route.group(() => {
+
   //Get All Groups
   Route.get('/', 'GroupController.getAll').middleware('userRouteAdminPrivate')
   //Create Group
@@ -144,36 +153,34 @@ Route.group(() => {
   Route.get('/:id', 'GroupController.getById').middleware('GroupsRouteDualPrivate')
   //Delete Groups By Id
   Route.delete('/:id', 'GroupController.deleteById').middleware('userRouteAdminPrivate')
-  //Get get member By Id
+  //Post member By Id
   Route.post('/:id/member', 'UserGroupController.addById').middleware('GroupsRouteDualPrivate')
   //Put/remove Manager Group By Id
   Route.patch('/:id/member', 'UserGroupController.modifyManagerById').middleware('userRouteAdminPrivate')
   //Delete User inside Group By Id
   Route.delete('/:id/member', 'UserGroupController.deleteUserById').middleware('GroupsRouteDualPrivate')
   
-
 }).prefix('/groups').middleware('auth')
 
 
 //locations
 Route.group(() => {
+
   //Get All Locations
   Route.get('/', 'LocationController.getAll').middleware('userRouteAdminPrivate')
   //Get Location-Id
   Route.get('/:id', 'LocationController.getId').middleware('LocationRouteDualPrivate')
   //Create Location
   Route.post('/', 'LocationController.create').validator('Location').middleware('userRouteAdminPrivate')
-  
   //Update Location
   Route.patch('/:id', 'LocationController.update').validator('LocationUpdate').middleware('userRouteAdminPrivate')
   //Delete Location
   Route.delete('/:id', 'LocationController.delete').middleware('userRouteAdminPrivate')
-
   //Add Location Private
   Route.post('/:id/users', 'UserLocationController.addPrivate').middleware('userRouteAdminPrivate')
   //Remove Location Private
   Route.delete('/:id/users', 'UserLocationController.removePrivate').middleware('userRouteAdminPrivate')
-
   //Get Event On Location
   Route.get('/:id/events', 'LocationController.getEvents').middleware('userRouteAdminPrivate')
-}).prefix('/location').middleware('auth')
+
+}).prefix('/locations').middleware('auth')

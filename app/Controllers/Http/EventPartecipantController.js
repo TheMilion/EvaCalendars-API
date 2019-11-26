@@ -9,8 +9,9 @@ class EventPartecipantController {
     try {
       const id_params = params.id
       const {utenti} = request.all()
+      var checkExist = await Event.find(params.id)
       var event = await EventPartecipant.query().where("id_event" , params.id).fetch()  
-        if(event){
+        if(checkExist){
           event = event.toJSON()
           utenti.forEach(user => {
             counterError = 0
