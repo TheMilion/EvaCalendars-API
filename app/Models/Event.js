@@ -16,7 +16,7 @@ class Event extends Model {
     partecipants () {
         //modello finale -- chiave esterna sulla pivot modello id 
         //return this.belongsToMany('App/Models/User', "id_event", "id_user", "id", "id").select(['nome','cognome','email']).pivotModel('App/Models/EventPartecipant').withPivot(['stato'])
-        return this.hasMany('App/Models/EventPartecipant', 'id','id_event')
+        return this.hasMany('App/Models/EventPartecipant', 'id','id_event').with('partecipant')
     }
     category () {
         return this.hasOne('App/Models/Category', 'id_category','id')

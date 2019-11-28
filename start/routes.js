@@ -47,6 +47,7 @@ Route.group(() => {
   Route.post('/Login', 'AuthController.login')
   //Get Refresh Token
   Route.post('/refresh', 'AuthController.refresh')
+  //LogOut
   Route.post('/logout', 'AuthController.logout')
 
 }).prefix('/Auth')
@@ -59,11 +60,11 @@ Route.group(() => {
   //Get Event
   Route.get('/events', 'AuthController.getEvents')
   //Get Categories
-  Route.get('/categories', 'AuthController.getCategory')
+  Route.get('/categories', 'AuthController.getCategory').middleware('userRouteAdminUserCompany')
   //Get locations
-  Route.get('/locations', 'AuthController.getlocation')
+  Route.get('/locations', 'AuthController.getlocation').middleware('userRouteAdminUserCompany')
   //Get groups
-  Route.get('/groups', 'AuthController.getGroups')
+  Route.get('/groups', 'AuthController.getGroups').middleware('userRouteAdminUserCompany')
 
 }).prefix('/me').middleware('auth')
 
@@ -71,11 +72,11 @@ Route.group(() => {
 Route.group(() => {
 
   //Get All User
-  Route.get('/', 'UserController.getAll').middleware('userRouteAdminPrivate')
+  Route.get('/', 'UserController.getAll').middleware('userRouteAdminUserCompany')
   //Create new User
   Route.post('/', 'UserController.create').validator('User').middleware('userRouteAdminPrivate')
   //Get User-Id
-  Route.get('/:id', 'UserController.getById').middleware('userRouteDualPrivate')
+  Route.get('/:id', 'UserController.getById').middleware('userRouteAdminUserCompany')
   //Get User-Id Event
   Route.get('/:id/events', 'UserController.getEventsById').middleware('userRouteDualPrivate')
   //Get User-Id Categories
@@ -85,7 +86,7 @@ Route.group(() => {
   //Get User-Id Groups
   Route.get('/:id/groups', 'UserController.getGroupsById').middleware('userRouteDualPrivate')
   //Update User
-  Route.patch('/:id', 'UserController.update').validator('UserUpdate').middleware('userRouteDualPrivate')
+  Route.patch('/:id', 'UserController.update').validator('User').middleware('userRouteDualPrivate')
   //Delete User
   Route.delete('/:id', 'UserController.deleteById').middleware('userRouteDualPrivate')
 
@@ -97,7 +98,7 @@ Route.group(() => {
   //Get All Categories
   Route.get('/', 'CategoryController.getAll').middleware('userRouteAdminPrivate')
   //Create Categories
-  Route.post('/', 'CategoryController.create').validator('Category')
+  Route.post('/', 'CategoryController.create').validator('Category').middleware('userRouteAdminUserCompany')
   //Get Categories-Id
   Route.get('/:id', 'CategoryController.getById').middleware('CategoriesRouteDualPrivate')
   //Delete Categories-Id
@@ -128,11 +129,11 @@ Route.group(() => {
 Route.group(() => {
 
   //Get All Events
-  Route.get('/', 'EventController.getAll').middleware('userRouteAdminPrivate')
+  Route.get('/', 'EventController.getAll')
   //Post Event
   Route.post('/', 'EventController.create').validator('Event').middleware('EventsPrivatePost')
   //Patch Event
-  Route.patch('/:id', 'EventController.update').validator('EventUpdate').middleware('EventsPrivateRouteCheck')
+  Route.patch('/:id', 'EventController.update').validator('Event').middleware('EventsPrivateRouteCheck')
   //Delete Event
   Route.delete('/:id', 'EventController.deleteById').middleware('EventsPrivateRouteCheck')
   //Post User Event
@@ -149,13 +150,17 @@ Route.group(() => {
 Route.group(() => {
 
   //Get All Groups
-  Route.get('/', 'GroupController.getAll')
+  Route.get('/', 'GroupController.getAll').middleware('userRouteAdminUserCompany')
   //Create Group
   Route.post("/",'GroupController.create').validator('Group').middleware('userRouteAdminPrivate')
+  //Post member in Groups without ID
+  Route.post('/member', 'UserGroupController.addInGroups').validator('GroupPartecipants').middleware('userRouteAdminPrivate')
+  //Delete member in Groups without ID
+  Route.delete('/member', 'UserGroupController.deleteInGroups').validator('GroupPartecipantsDelete').middleware('userRouteAdminPrivate')
   //Update Group by Id
   Route.patch("/:id", 'GroupController.update').validator('Group').middleware('userRouteAdminPrivate')|
   //Get Groups By Id
-  Route.get('/:id', 'GroupController.getById')
+  Route.get('/:id', 'GroupController.getById').middleware('userRouteAdminUserCompany')
   //Delete Groups By Id
   Route.delete('/:id', 'GroupController.deleteById').middleware('userRouteAdminPrivate')
   //Post member By Id

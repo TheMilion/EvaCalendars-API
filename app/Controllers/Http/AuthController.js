@@ -1,7 +1,7 @@
 'use strict'
 
 const Category = use('App/Models/Category')
-
+const Event = use('App/Models/Event')
 class AuthController {
 
     async login ({ request, auth }) {
@@ -23,7 +23,6 @@ class AuthController {
       try {
         const refreshToken = request.input('refreshToken');
         if(!refreshToken){
-
             // You can throw any exception you want here
             throw response.send(`Refresh Token missing`);
         }
@@ -51,9 +50,9 @@ class AuthController {
 
     async getEvents({auth, request, response}) {
         try {
+          const creatorEvent =  await Event.query().where("id_creator", auth.user.id).fetch()
           const events = await auth.user.events().fetch()
-          if(events.rows.length != 0) return response.status(200).send(events)
-          else return response.status(404).send("Nessun evento Trovato")
+          return response.status(200).send({creator: creatorEvent, partecipate: events})
         } catch(e) {
           return response.status(500).send({
             message: e.message
@@ -64,8 +63,7 @@ class AuthController {
       async getlocation({ response, auth }) {
         try {
           const location = await auth.user.location().fetch()
-          if(location.rows.length != 0) return response.status(200).send(location)
-          else return response.status(404).send("Nessuna Location Trovato")
+          return response.status(200).send(location)
         } catch(e) {
           return response.status(500).send({
             message: e.message
@@ -88,8 +86,7 @@ class AuthController {
     async getGroups({ response, auth }) {
       try {
         const groups = await auth.user.groups().fetch()
-        if(groups.rows.length != 0) return response.status(200).send(groups)
-        else return response.status(404).send("Nessuna gruppo trovato")
+        return response.status(200).send(groups)
       } catch(e) {
         return response.status(500).send({
           message: e.message

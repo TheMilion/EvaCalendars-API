@@ -6,6 +6,38 @@ var counterError = 0
 
 class UserGroupController {
 
+  async addInGroups ({request,response}) {
+    try {
+      const {utenti} = request.all()
+      utenti.forEach(async user => {
+        counterError = 0
+        var gruppo = await UserGroup.query().where('id_group' , user.id_group).fetch()
+          gruppo = gruppo.toJSON()
+          gruppo.forEach(group => { if(user.id_user == group.id_user) counterError ++ })
+          if(counterError == 0 ) await UserGroup.create({id_user: user.id_user, id_group: user.id_group, manager: user.manager})
+      }) 
+    return response.status(200).send("Operazione Effettuata Correttamente")
+      } catch(e) {
+      return response.status(500).send({
+        message: e.message
+      })
+    }
+  }
+
+  async deleteInGroups ({request,response}) {
+    try {
+      const {utenti} = request.all()
+      utenti.forEach(async user => { await UserGroup.query().where('id_group' , user.id_group).where('id_user', user.id_user).delete() })
+        return response.status(200).send("Operazione Effettuata Correttamente")
+      } catch(e) {
+      return response.status(500).send({
+        message: e.message
+      })
+    }
+  }
+
+
+
   async addById ({request,response, params}) {
     try {
       const id_params = params.id

@@ -23,7 +23,20 @@ class User {
   }
 
   get rules () {
-    return {
+    //PATCH
+    if(this.ctx.params.id) return {
+      
+      title: 'min:1',
+      id_category: 'integer|exists:categories,id',
+      id_location: 'integer|exists:locations,id',
+      date_from: 'min:1|date',
+      date_to: 'min:1|date',
+      hour_from: 'min:1',
+      hour_to: 'min:1',
+      note: 'min:1',
+    }
+    //POST
+    else return {
       title: 'required',
       id_category: 'min:1|integer|exists:categories,id',
       id_location: 'min:1|integer|exists:locations,id',
@@ -39,10 +52,15 @@ class User {
   get messages () {
     return {
       'title.required': 'Titolo obbligatorio',
+      'title.min': 'Titolo obbligatorio',
       'date_from.required': 'Campo Data inizio obbligatoria',
       'date_to.required': 'Campo Data fine obbligatoria',
+      'date_from.min': 'Campo Data inizio obbligatoria',
+      'date_to.min': 'Campo Data fine obbligatoria',
       'hour_from.required': 'Campo ora inizio obbligatoria',
       'hour_to.required': 'Campo ora fine obbligatoria',
+      'hour_from.min': 'Campo ora inizio obbligatoria',
+      'hour_to.min': 'Campo ora fine obbligatoria',
       'note.min': 'Campo note non puo essere vuoto se inserito',
       'id_location.min': 'Campo location non puo essere vuoto se inserito',
       'id_location.integer': 'Campo location deve essere intero',

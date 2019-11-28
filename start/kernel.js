@@ -39,12 +39,14 @@ const namedMiddleware = {
   guest: 'Adonis/Middleware/AllowGuestOnly',
   userRouteDualPrivate: 'App/Middleware/userRouteDualPrivate',
   userRouteAdminPrivate: 'App/Middleware/userRouteAdminPrivate',
+  userRouteAdminUserCompany: 'App/Middleware/userRouteAdminUserCompany',
   CategoriesRouteDualPrivate: 'App/Middleware/CategoriesRouteDualPrivate',
   EventsRouteDualPrivate: 'App/Middleware/EventsRouteDualPrivate',
   EventsPrivateRouteCheck: 'App/Middleware/EventsPrivateRouteCheck',
   GroupsRouteDualPrivate: 'App/Middleware/GroupsRouteDualPrivate',
   LocationRouteDualPrivate: 'App/Middleware/LocationRouteDualPrivate',
   EventsPrivatePost: 'App/Middleware/EventsPrivatePost'
+  
 }
 
 /*

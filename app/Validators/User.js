@@ -6,14 +6,23 @@ class User {
   }
 
   get rules () {
-    return {
+    //PATCH
+    if(this.ctx.params.id) return {
       nome: 'required',
       cognome: 'required',
       email: 'required|email|unique:users',
       password: 'required',
       reparto: 'required',
       id_role: 'required'
-
+    }
+    //POST
+    else return {
+      nome: 'min:1',
+      cognome: 'min:1',
+      email: 'email|unique:users',
+      password: 'min:4',
+      reparto: 'min:1',
+      id_role: 'min:1'
     }
   }
 
@@ -26,6 +35,11 @@ class User {
       'cognome.required': 'Campo Cognome Obbligatorio',
       'reparto.required': 'Campo Reparto Obbligatorio',
       'id_role.required': 'Campo Ruolo Obbligatorio',
+      'email.min': 'Campo Email Obbligatorio',
+      'nome.min': 'Campo Nome Obbligatorio',
+      'cognome.min': 'Campo Cognome Obbligatorio',
+      'reparto.min': 'Campo Reparto Obbligatorio',
+      'id_role.min': 'Campo Ruolo Obbligatorio',
     }
 }
 

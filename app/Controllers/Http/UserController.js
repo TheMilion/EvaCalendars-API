@@ -2,6 +2,8 @@
 
 const User = use('App/Models/User')
 const Event = use('App/Models/Event')
+const Category = use('App/Models/Category')
+const Mail = use('Mail')
 
 
 class UserController {
@@ -49,8 +51,9 @@ class UserController {
     try {
       const id_params = params.id
       const users = await User.find(id_params)
+      const globalCategory =  await Category.query().where("id_user", null).fetch()
       const category = await users.category().fetch()
-      return  response.status(200).send(category)
+      return response.status(200).send({personali: category, globali:globalCategory})
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -62,8 +65,10 @@ class UserController {
     try {
       const id_params = params.id
       const users = await User.find(id_params)
+      const creatorEvent =  await Event.query().where("id_creator", users.id).fetch()
       const events = await users.events().fetch()
-      return  response.status(200).send(events)
+      return response.status(200).send({creator: creatorEvent, partecipante: events})
+      //return  response.status(200).send(events)
     } catch(e) {
       return response.status(500).send({
         message: e.message
