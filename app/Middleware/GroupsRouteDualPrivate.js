@@ -2,7 +2,7 @@
 
 const UserGroup = use('App/Models/UserGroup')
 
-class userCategoriesRouteDualPrivate {
+class GroupsRouteDualPrivate {
 
   async handle ({ params,response, auth }, next) {
     const id_params = params.id
@@ -15,9 +15,9 @@ class userCategoriesRouteDualPrivate {
         return response.status(401).send("Non hai i permessi per visualizzare questa categoria")
       }
     }
-    await next()
+   await next()
     
   }
 }
 
-module.exports = userCategoriesRouteDualPrivate
+module.exports = GroupsRouteDualPrivate

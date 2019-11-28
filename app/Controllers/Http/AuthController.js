@@ -30,9 +30,6 @@ class AuthController {
         await auth
           .authenticator('jwt')
           .revokeTokens([refreshToken], true)
-
-        console.log(auth.user)
-
         return response.send({status : 200, "message" : 'success'})
       } catch (error) {
         return response.status(500).send(error)

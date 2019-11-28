@@ -63,8 +63,11 @@ async updateById ({ params, request, response }) {
 
 async create ({request, response, auth}) {
   try {
+    var id = ''
+    if(auth.user.id_role == 3 || auth.user.id_role == 4) id = null
+    else id = auth.user.id
     const nome = request.only(['nome'])
-    await Category.create({...nome, "id_user" : auth.user.id})
+    await Category.create({...nome, "id_user" : id})
     return  response.status(200).send("Categoria Creato Correttamente")
   } catch(e) {
     return response.status(500).send({

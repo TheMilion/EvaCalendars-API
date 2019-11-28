@@ -40,7 +40,6 @@ class User {
       title: 'required',
       id_category: 'min:1|integer|exists:categories,id',
       id_location: 'min:1|integer|exists:locations,id',
-      id_creator: 'required|integer|exists:users,id',
       date_from: 'required',
       date_to: 'required',
       hour_from: 'required',
@@ -68,9 +67,6 @@ class User {
       'id_category.integer': 'Campo Categorie deve essere intero',
       'id_category.min': 'Campo categorie non puo essere vuoto se inserito',
       'id_category.exists': 'Categoria non esistente',
-      'id_creator.integer': 'Campo Categorie deve essere intero',
-      'id_creator.required': 'Campo creatore obbligatorio',
-      'id_creator.exists': 'Users non esistente',
     }
 }
 

@@ -40,19 +40,20 @@ class UserGroupController {
 
   async addById ({request,response, params}) {
     try {
-      const id_params = params.id
-      const {utenti} = request.all()
-      var gruppoExist = await Group.find(id_params)
-        if(gruppoExist){
-          var gruppo = await UserGroup.query()
-          .where('id_group' , id_params).fetch()
-          gruppo = gruppo.toJSON()
-          utenti.forEach(user => {
-            counterError = 0
-            gruppo.forEach(group => { if(user.id_user == group.id_user) counterError ++ })
-              if(counterError == 0 ) UserGroup.create({...user, id_group: id_params}) });
-            return response.status(200).send("Operazione Effettuata Correttamente")
-        }else return response.status(404).send("il Gruppo non esiste")    
+
+      const { id } = params
+      const { id_users } = request.all()
+      let messages = []
+      for(let i in id_users) {
+        const query = await UserGroup.query().where('id_group', id).where('id_user', id_users[i]).fetch()
+  
+        if(query.rows.length!=0) messages.push({message: 'L\'associazione Utente '+id_users[i]+' con il Gruppo '+id+' già esiste'})
+        else {
+          await UserGroup.create({'id_group': id, 'id_user': id_users[i]})
+          messages.push({message:'Associazione Utente '+id_users[i]+' con Gruppo '+id+' creata'})
+        }
+      }
+      return response.status(200).send(messages)
     } catch(e) {
       return response.status(500).send({
         message: e.message
@@ -83,17 +84,19 @@ class UserGroupController {
 
   async deleteUserById ({request,response, params}) {
     try {
-      const id_params = params.id
-      const {utenti} = request.all()
-      var gruppoExist = await Group.find(id_params)
-        if(gruppoExist){
-          const users = utenti.map(x => x.id_user);
-          var gruppo = await UserGroup.query()
-            .where('id_group' , id_params)
-            .whereIn('id_user', users)
-            .delete()
-        return response.status(200).send("Utenti Rimossi correttametente")
-      }else return response.status(404).send("il Gruppo non esiste")    
+      const { id } = params
+      const { id_users } = request.all()
+      let messages = []
+      for(let i in id_users) {
+        const query = await UserGroup.query().where('id_group', id).where('id_user', id_users[i]).fetch()
+        if(query.rows.length==0) messages.push({message: 'L\'associazione Utente '+id_users[i]+' con Gruppo '+id+' non esiste'})
+        else {
+          const userGruppo = await UserGroup.find(query.rows[0].id)
+          await userGruppo.delete()
+          messages.push({message:'Associazione Utente '+id_users[i]+' con Gruppo '+id+' rimossa'})
+        }
+      }
+      return response.status(200).send(messages)
     } catch(e) {
       return response.status(500).send({
         message: e.message

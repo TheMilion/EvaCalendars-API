@@ -5,12 +5,12 @@ const UserLocation = use('App/Models/UserLocation')
 class UserLocationController {
   async addPrivate ({request,response, params}) {
     try {
+      
       const { id } = params
       const { id_users } = request.all()
       let messages = []
       for(let i in id_users) {
         const query = await UserLocation.query().where('id_location', id).where('id_user', id_users[i]).fetch()
-        
         if(query.rows.length!=0) messages.push({message: 'L\'associazione Utente '+id_users[i]+' con Location '+id+' già esiste'})
         else {
           await UserLocation.create({'id_location': id, 'id_user': id_users[i]})
